@@ -1,0 +1,178 @@
+-- Total number of shipments, total freight cost, and average freight cost per shipment.
+SELECT
+    COUNT(fulfillment_key) AS total_shipments,
+    CAST(SUM(freight_cost_usd) AS DECIMAL(10, 2)) AS total_freight_cost,
+    CAST(ROUND(AVG(freight_cost_usd), 2) AS DECIMAL(10, 2)) AS average_freight_cost
+FROM
+    vw_supply_chain_analytics;
+
+-- Total number of shipments, number of delayed shipments, and percentage of delayed shipments.
+SELECT
+    COUNT(fulfillment_key) AS total_shipments,
+    SUM(
+        CASE
+            WHEN delivery_delay_days > 0 THEN 1
+            ELSE 0
+        END
+    ) AS delayed_shipments,
+    CAST(
+        ROUND(
+            SUM(
+                CASE
+                    WHEN delivery_delay_days > 0 THEN 1
+                    ELSE 0
+                END
+            ) * 100.0 / COUNT(fulfillment_key),
+            2
+        ) AS DECIMAL(5, 2)
+    ) AS percentage_delayed
+FROM
+    vw_supply_chain_analytics;
+
+-- Average delivery delay by vendor, sorted by average freight cost and average delivery delay.
+SELECT
+    vendor_name,
+    COUNT(fulfillment_key) AS total_shipments,
+    CAST(SUM(freight_cost_usd) AS DECIMAL(10, 2)) AS Total_Freight_Cost,
+    AVG(
+        DATEDIFF (
+            DAY,
+            delivered_to_client_date,
+            scheduled_delivery_date
+        )
+    ) AS average_delivery_delay
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    vendor_name
+HAVING
+    SUM(freight_cost_usd) > 0
+ORDER BY
+    Total_Freight_Cost ASC,
+    average_delivery_delay ASC;
+
+-- risk analysis: Identify vendors with average delivery delays greater than 5 days, sorted by average delivery delay.
+    SELECT
+        vendor_name,
+        COUNT(fulfillment_key) AS total_shipments,
+        AVG(
+            DATEDIFF (
+                DAY,
+                scheduled_delivery_date,
+                delivered_to_client_date
+            )
+        ) AS average_delivery_delay
+    FROM
+        vw_supply_chain_analytics
+    GROUP BY
+        vendor_name
+    HAVING
+        AVG(
+            DATEDIFF (
+                DAY,
+                scheduled_delivery_date,
+                delivered_to_client_date
+            )
+        ) > 5;
+
+-- Shipment mode analysis: total shipments and average freight cost by shipment mode, sorted by total freight cost.
+SELECT
+    shipment_mode,
+    COUNT(fulfillment_key) AS total_shipments,
+    CAST(AVG(freight_cost_usd) AS DECIMAL(10, 2)) AS Average_Freight_Cost
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    shipment_mode
+ORDER BY
+    Average_Freight_Cost ASC;
+
+-- Country analysis: total shipments and total freight cost by country, sorted by total freight cost.
+SELECT
+    country,
+    COUNT(fulfillment_key) AS total_shipments,
+    CAST(SUM(freight_cost_usd) AS DECIMAL(10, 2)) AS total_freight_cost
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    country
+HAVING
+    SUM(freight_cost_usd) > 0
+ORDER BY
+    total_freight_cost ASC;
+
+-- High cost-to-value items: Identify shipments where the freight cost is a high percentage of the line item value, sorted by cost ratio.
+SELECT
+    product_group AS product_category,
+    CAST(SUM(line_item_total_value_usd) AS DECIMAL(18, 2)) AS Total_Product_Value,
+    CAST(SUM(freight_cost_usd) AS DECIMAL(10, 2)) AS Total_Shipping_Cost,
+    CAST(
+        (
+            SUM(freight_cost_usd) / SUM(line_item_total_value_usd)
+        ) * 100.0 AS DECIMAL(10, 2)
+    ) AS Cost_Ratio
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    product_group
+HAVING
+    SUM(freight_cost_usd) > 0
+ORDER BY
+    Cost_Ratio asc;
+
+-- Trend analysis: Monthly freight cost trends over time, sorted by month.
+SELECT
+    eomonth (delivered_to_client_date) AS MONTH_Date,
+    SUM(freight_cost_usd) AS Monthly_Cost
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    eomonth (delivered_to_client_date)
+HAVING
+    SUM(freight_cost_usd) > 0
+ORDER BY
+    MONTH_Date asc;
+
+-- Trend analysis: Monthly landed cost trends over time, sorted by month.
+SELECT
+    eomonth (delivered_to_client_date) AS MONTH_Date,
+    SUM(total_landed_cost_usd) AS Monthly_Landed_Cost,
+    SUM(freight_cost_usd) AS Monthly_Freight_Cost,
+    CAST(
+        SUM(freight_cost_usd) / SUM(total_landed_cost_usd) * 100.0 AS DECIMAL(10, 2)
+    ) AS Freight_Cost_Percentage
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    eomonth (delivered_to_client_date)
+ORDER BY
+    MONTH_Date asc;
+
+-- Vendor performance analysis: Average lead time and standard deviation of lead time by vendor, sorted by average lead time.
+SELECT
+    vendor_name,
+    AVG(vendor_lead_time_days) AS average_lead_time,
+    stdev (vendor_lead_time_days) AS lead_time_stddev
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    vendor_name
+HAVING
+    AVG(vendor_lead_time_days) > 0
+    AND stdev (vendor_lead_time_days) > 0
+ORDER BY
+    average_lead_time asc;
+
+-- Shipment mode cost analysis: Total revenues and freight cost percentage by shipment mode, sorted by freight cost percentage.
+SELECT
+    shipment_mode,
+    SUM(line_item_quantity * pack_price_usd) AS Revenues,
+    (
+        SUM(freight_cost_usd) / SUM(line_item_quantity * pack_price_usd) * 100
+    ) AS Freight_Cost_Percentage
+FROM
+    vw_supply_chain_analytics
+GROUP BY
+    shipment_mode
+ORDER BY
+    Freight_Cost_Percentage ASC;
