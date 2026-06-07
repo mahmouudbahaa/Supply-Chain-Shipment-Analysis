@@ -1,0 +1,57 @@
+CREATE TABLE dbo.dim_project (
+    project_key INT IDENTITY(1,1) PRIMARY KEY,
+    project_code VARCHAR(50) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    managed_by VARCHAR(50) NOT NULL
+);
+
+
+CREATE TABLE dbo.dim_fulfillment (
+    fulfillment_key INT IDENTITY(1,1) PRIMARY KEY,
+    fulfill_via VARCHAR(50) NOT NULL,
+    vendor_inco_term VARCHAR(50) NOT NULL,
+    shipment_mode VARCHAR(50) NOT NULL
+);
+
+
+CREATE TABLE dbo.dim_product (
+    product_key INT IDENTITY(1,1) PRIMARY KEY,
+    product_group VARCHAR(50) NOT NULL,
+    sub_classification VARCHAR(50) NOT NULL,
+    item_description VARCHAR(255) NOT NULL,
+    molecule_test_type VARCHAR(255) NOT NULL,
+    brand VARCHAR(100) NOT NULL,
+    dosage VARCHAR(100) NOT NULL,
+    dosage_form VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE dbo.dim_vendor (
+    vendor_key INT IDENTITY(1,1) PRIMARY KEY,
+    vendor_name VARCHAR(255) NOT NULL,
+    manufacturing_site VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE dbo.fact_table (
+    fact_id INT PRIMARY KEY, -- Maps directly to the source unique transaction ID
+    project_key INT NOT NULL CONSTRAINT FK_fact_project REFERENCES dbo.dim_project(project_key),
+    fulfillment_key INT NOT NULL CONSTRAINT FK_fact_fulfillment REFERENCES dbo.dim_fulfillment(fulfillment_key),
+    product_key INT NOT NULL CONSTRAINT FK_fact_product REFERENCES dbo.dim_product(product_key),
+    vendor_key INT NOT NULL CONSTRAINT FK_fact_vendor REFERENCES dbo.dim_vendor(vendor_key),
+    [PQ #] VARCHAR(50),
+    [PO / SO #] VARCHAR(50),
+    [ASN/DN #] VARCHAR(50),
+    [PQ First Sent to Client Date] DATE,
+    [PO Sent to Vendor Date] DATE,
+    [Scheduled Delivery Date] DATE,
+    [Delivered to Client Date] DATE,
+    [Delivery Recorded Date] DATE,
+    [Unit of Measure (Per Pack)] INT,
+    [Line Item Quantity] INT,
+    [Line Item Value] DECIMAL(18,2),
+    [Pack Price] DECIMAL(18,2),
+    [Unit Price] DECIMAL(18,4),
+    [Line Item Insurance (USD)] DECIMAL(18,2),
+    [First Line Designation] INT,
+    [Weight (Kilograms)] VARCHAR(100),
+    [Freight Cost (USD)] VARCHAR(100)
+);
