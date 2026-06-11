@@ -13,7 +13,7 @@ This project transforms complex, transactional global supply chain and procureme
 ## 📷 Dashboard Preview
 
 <p align="center">
-  <img src="Screenshots/dashboard-overview.png" width="700">
+  <img src=Screenshots/Dashboard.jpg width="500">
 </p>
 
 ---
