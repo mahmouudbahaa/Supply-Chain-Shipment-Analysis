@@ -124,7 +124,7 @@ Applied `NULLIF()` to avoid division-by-zero errors when calculating freight-to-
 
 For detailed insights and KPI breakdown:
 
-👉 **Logistics Executive Briefing → business_insights.md**
+👉 **Logistics Executive Briefing → > Docs/Business_Insights.md**
 
 ---
 
