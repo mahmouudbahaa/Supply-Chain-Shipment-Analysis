@@ -134,7 +134,8 @@ For detailed insights and KPI breakdown:
 Supply-Chain-Logistics-Analytics/
 │
 ├── README.md
-├── business_insights.md
+├── Docs
+│   ├── business_insights.md
 │
 ├── Screenshots/
 │   ├── dashboard-overview.png
