@@ -1,32 +1,28 @@
-Supply Chain Logistics: Performance & Cost Optimization
+# 🚚 Supply Chain & Logistics Performance Optimization (SQL)
 
-📝 Project Overview
-This project provides a comprehensive end-to-end data analytics solution for pharmaceutical supply chain operations. By leveraging SQL Server for data engineering and Power BI for advanced visualization, the project transforms complex logistics data into actionable insights, focusing on freight cost reduction, vendor reliability, and delivery efficiency.
+## 📌 Project Overview
+This repository contains a comprehensive relational database analysis focused on supply chain efficiency, procurement optimization, logistics cost management, and vendor risk analysis. Utilizing a structured **Star Schema**, this project transforms granular transactional records into high-level business metrics including **Total Landed Cost**, **On-Time Delivery Rates**, and **Vendor Lead-Time Volatility**.
 
-🛠️ Tech Stack
-Database: SQL Server Management Studio (SSMS) - T-SQL.
-Data Engineering: Star Schema modeling, View-based data virtualization, and rigorous data cleaning.
-Data Analysis: DAX (Data Analysis Expressions) for complex KPIs and time-series calculations.
-Visualization: Power BI (Interactive Dashboards).
+## 🏗️ Data Architecture (Star Schema Implementation)
+The analytics framework is built on a specialized Fact-Dimension architecture optimized for corporate reporting:
+- **`fact_table`**: Stores operational milestones, core dollar values (Freight, Pack Price, Insurance), and volume quantities.
+- **`dim_product`**: Contains SKU details, sub-classifications, and pharmaceutical details (Dosage, Molecule Test).
+- **`dim_vendor` / `dim_project`**: Tracks source manufacturing sites, ownership, and target fulfillment countries.
+- **`dim_fulfillment`**: Houses logistics channel details and Incoterms.
 
-🚀 Key Technical Achievements
-1. Data Engineering & Cleaning (SQL)
-Data Virtualization: Created a robust suite of ⁠VIEW⁠ tables to structure raw data into a clean, analytical format.
-Star Schema Design: Architected a star schema model in Power BI, connecting fact tables with dimension tables (Product, Vendor, Fulfillment, Project) for efficient filtering and performance.
-Advanced Cleaning: Implemented ⁠TRY_CAST⁠, ⁠ISNULL⁠, and conditional logic (⁠CASE WHEN⁠) to handle missing values and data anomalies (e.g., legacy/outlier lead times), ensuring data integrity.
-2. Advanced Analytics & DAX
-On-Time Delivery (OTD) Tracking: Developed a dynamic DAX measure to calculate delivery reliability based on actual vs. scheduled delivery dates.
-Risk Analysis: Created vendor performance profiles using statistical methods (standard deviation of lead times) to identify high-risk suppliers.
-Cost Efficiency: Engineered financial metrics, including Total Landed Cost and Freight-to-Value ratios, to pinpoint cost-inefficient shipping modes.
+---
 
-📊 Business Insights & Dashboarding
-The resulting Logistics Performance Dashboard serves as a centralized decision-support tool, enabling stakeholders to:
-Monitor Operational KPIs: High-level executive view of shipments, freight spend, and delivery rates.
-Identify Bottlenecks: Used scatter plots to correlate lead time volatility with freight costs, highlighting suppliers that pose risks to the supply chain.
-Geospatial Analysis: Leveraged map-based visualizations to identify high-cost regions and shipment density across continents.
- 
-🎯 Recommendations
-Based on the data-driven insights, I recommended:
-1 Strategic Sourcing: Prioritizing vendors with low lead-time volatility to reduce safety stock requirements.
-2 Mode Optimization: Re-evaluating shipment modes for high-cost routes identified in the freight-to-value analysis.
-3 Data Governance: Improving data entry protocols at the system level to mitigate future outliers in lead-time reporting.
+## 🛠️ Key Analytical Metrics Formulated
+
+1. **Total Landed Cost ($):** $$\text{Landed Cost} = \text{Line Item Value} + \text{Freight Cost} + \text{Insurance}$$
+   Crucial for evaluating the *true* profitability of procured items by including all logistics overheads.
+   
+2. **Vendor Lead Time Variability:** Calculates both `AVG` and `STDEV` of procurement spans to assess which suppliers introduce chaos into the warehouse replenishment schedule.
+
+3. **Freight Cost Percentage of Value:** Identifies financial inefficiency where transit expense outweighs the intrinsic product value.
+
+---
+
+## 📂 File Deliverables
+- `04_Supply_Chain_Analysis.sql`: Full localized T-SQL production script containing the View layers and advanced operational analytical metrics.
+- `business_insights.md`: Executive advisory briefing translating mathematical query results into strategic, bottom-line supply chain interventions.
