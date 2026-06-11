@@ -37,7 +37,7 @@ To maximize query execution performance and align with Kimball data warehousing 
 ## 🧱 Schema Preview
 
 <p align="center">
-  <img src="Screenshots/Schema.png" width="700">
+  <img src="Screenshots/Schema.png" width="500">
 </p>
 
 ### 📊 Fact Tables
@@ -141,7 +141,9 @@ Supply-Chain-Logistics-Analytics/
 │   └── Schema.png
 │
 ├── SQL Scripts/
-│   └── 04_Supply_Chain_Analysis.sql
+│   └── 01_Create_View_Tables
+│   └── 02_Analysis
+│
 ```
 
 ---
